@@ -1,4 +1,7 @@
 </> JSON
+git add package.json
+git commit -m "Fix malformed package metadata"
+git push
 
 {
   "name": "sample-ci-cd-app",
