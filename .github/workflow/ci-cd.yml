@@ -12,6 +12,8 @@ on:
 permissions:
   contents: read
 
+npm install --save-dev webpack webpack-cli
+
 jobs:
 
 #---------------------
