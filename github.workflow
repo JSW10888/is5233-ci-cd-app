@@ -1,0 +1,113 @@
+name: CI/CD Pipeline
+on:
+  push:
+     branches:
+       - main
+       - develop
+  pull_request:
+     branches:
+        - main
+        - develop
+permissions:
+  contents: read
+
+jobs:
+
+#---------------------
+# build application
+#---------------------
+build:
+  name: Build Application
+  runs-on: ubuntu-latest
+
+  steps:
+    - name: Checkout source code
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: npm
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build application 
+      run: npm run build
+
+#---------------------
+# Validate / Test
+#---------------------
+test:
+  name: Test and Validate
+  runs-on: ubuntu-latest
+  needs: build
+
+steps:
+  - name: Checkout source code
+    uses: actions/checkout@v4
+
+  - name: Set up Node.js
+    uses: actions.setup-node@v4
+    with:
+      node-version: 20
+
+  - name: Install dependencies
+    run: npm install
+
+  - name: Run Validation
+    run: npm run lint
+
+  - name: Run unit tests
+    run: npm test
+#---------------------
+# Security Scan
+#---------------------
+security:
+  name: Security Scan
+  runs-on: ubuntu-latest
+  needs: test
+
+  permissions:
+    contents: read
+    security-events: write
+
+  steps:
+    - name: Checkout source code
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with: 
+        node-version:20
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Dependency vulernatbility scan
+      run: npm audit --audit-level=high
+
+#---------------------
+# Simulate Deployment
+#---------------------
+deploy:
+  name: Simulate Deployment
+  runs-on: ubuntu-latest
+  needs: security
+
+  if: github.ref == 'refs/heads/main' && github.event_name =='push'
+
+  environment:
+    name: production
+
+  steps:
+    - name: Checkout source code
+      uses: actions/checkout@v4
+
+    - name: Simulate Deployment
+      run: |
+        echo "Starting deployment..."
+        echo "Deploying application to production..."
+        echo "deployment successful!"
+  
