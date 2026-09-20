@@ -1,0 +1,12 @@
+</> JSON
+
+{
+  "name": "sample-ci-cd-app",
+  "version": "1.0.0",
+  "description": "Sample application demonstrating GitHub Actions CI/CD",
+  "main": {
+    "build": "echo 'Building application...'",
+    "lint": "echo 'Running lint validation...'",
+    "test": node tester/app.test.js"
+  }
+}
